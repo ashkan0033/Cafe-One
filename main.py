@@ -1,3 +1,4 @@
+import sys
 import threading
 import time
 from pathlib import Path
@@ -6,10 +7,18 @@ import uvicorn
 import webview
 from fastapi.staticfiles import StaticFiles
 
+ROOT_DIR = Path(__file__).resolve().parent
+if sys.stdout is None or sys.stderr is None:
+    _log_handle = open(ROOT_DIR / "cafe-one.log", "a", encoding="utf-8", buffering=1)
+    if sys.stdout is None:
+        sys.stdout = _log_handle
+    if sys.stderr is None:
+        sys.stderr = _log_handle
+
 from backend.api import app
 
 
-FRONTEND_DIR = Path(__file__).resolve().parent / "frontend" / "out"
+FRONTEND_DIR = ROOT_DIR / "frontend" / "out"
 PORT = 8080
 
 
@@ -19,7 +28,7 @@ def main():
 
     app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="desktop")
     server = uvicorn.Server(uvicorn.Config(
-        app, host="127.0.0.1", port=PORT, log_level="warning",
+        app, host="127.0.0.1", port=PORT, log_level="warning", log_config=None,
     ))
     backend = threading.Thread(target=server.run, daemon=True)
     backend.start()

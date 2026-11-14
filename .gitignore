@@ -36,6 +36,10 @@ backend/receipts/*.png
 backend/uploads/*
 !backend/uploads/.gitkeep
 
+# Build outputs & runtime logs
+dist/
+cafe-one.log
+
 # OS & Editor artifacts
 .DS_Store
 Thumbs.db
