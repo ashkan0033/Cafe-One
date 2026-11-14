@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+@layer components {
+  .cafe-panel {
+    @apply rounded-2xl border border-slate-800/90 bg-slate-900/75 shadow-xl backdrop-blur-md;
+  }
+
+  .cafe-card {
+    @apply rounded-2xl border border-slate-800/80 bg-slate-950/60 transition-colors;
+  }
+
+  .cafe-primary,
+  .cafe-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .cafe-primary {
+    @apply bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-sm shadow-emerald-950/50 hover:from-emerald-500 hover:to-teal-500 active:scale-[0.99];
+  }
+
+  .cafe-secondary {
+    @apply border border-slate-700/80 bg-slate-900 text-slate-200 hover:border-slate-500 hover:bg-slate-800 active:scale-[0.99];
+  }
+
+  .cafe-input {
+    @apply rounded-xl border border-slate-700/80 bg-slate-950/90 px-3.5 py-2.5 text-sm text-slate-100 outline-none transition-colors placeholder:text-slate-500 focus:border-amber-500/70 focus:ring-2 focus:ring-amber-500/20;
+  }
+}
+
+.cafe-workspace {
+  container-type: inline-size;
+}
+
+.cafe-pos-grid {
+  display: grid;
+  height: 100%;
+  min-height: 0;
+  gap: 0.75rem;
+  overflow: auto;
+}
+
+@container (min-width: 600px) {
+  .cafe-pos-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 35%);
+    grid-template-rows: auto minmax(0, 1fr);
+    overflow: hidden;
+  }
+
+  .cafe-pos-grid > aside {
+    grid-column: 1 / -1;
+  }
+
+  .cafe-pos-grid > section:last-child {
+    overflow-y: auto;
+  }
+}
+
+@container (min-width: 760px) {
+  .cafe-pos-grid {
+    grid-template-columns: minmax(155px, 17%) minmax(0, 1fr) minmax(310px, 34%);
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .cafe-pos-grid > aside {
+    grid-column: auto;
+  }
+
+  .cafe-pos-grid > aside > .cafe-category-list {
+    flex-direction: column;
+  }
+}
+
+/* اسکرول‌بار ظریف و یکپارچه */
+.custom-scrollbar::-webkit-scrollbar,
+.cafe-panel::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track,
+.cafe-panel::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.35);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb,
+.cafe-panel::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.35);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover,
+.cafe-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.6);
+}
+
+/* بهینه‌سازی چاپ برای لیست حقوق و گزارش‌ها */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .cafe-panel,
+  .cafe-card {
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    overflow: visible !important;
+  }
+  table th,
+  table td {
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+  }
+}

@@ -1,0 +1,43 @@
+# Python / Virtual Environments
+venv/
+.venv/
+ENV/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+backend/.env
+!backend/.env.example
+frontend/.env*
+
+# Next.js / Node.js
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/*.tsbuildinfo
+frontend/npm-debug.log*
+
+# Local SQLite database & WAL files
+backend/prisma/*.sqlite
+backend/prisma/*.sqlite-wal
+backend/prisma/*.sqlite-shm
+backend/prisma/*.db
+backend/prisma/*.db-journal
+
+# Generated thermal receipts & uploaded logos
+backend/receipts/*.png
+!backend/receipts/.gitkeep
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# OS & Editor artifacts
+.DS_Store
+Thumbs.db
+*.tmp
+*.log

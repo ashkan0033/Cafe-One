@@ -1,0 +1,139 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./database.sqlite"
+}
+
+generator client {
+  provider             = "prisma-client-py"
+  interface            = "asyncio"
+  recursive_type_depth = 5
+}
+
+model Employee {
+  id          Int          @id @default(autoincrement())
+  name        String
+  role        String       // ADMIN, CASHIER, BARISTA, WAITER
+  phone       String?
+  password    String       // برای ورود به سیستم
+  
+  // اطلاعات مالی و شیفت
+  baseSalary  Float        @default(0)
+  hourlyRate  Float        @default(0)
+  shiftStart  String       @default("08:00") // ساعت شروع شیفت موظفی
+  shiftEnd    String       @default("16:00") // ساعت پایان شیفت موظفی
+  isActive    Boolean      @default(true)
+  
+  orders      Order[]      // ارتباط با فیش‌های ثبت شده
+  attendances Attendance[]
+  leaves      Leave[]
+  
+  createdAt   DateTime     @default(now())
+}
+
+model Attendance {
+  id          Int       @id @default(autoincrement())
+  employeeId  Int
+  employee    Employee  @relation(fields: [employeeId], references: [id])
+  
+  date        DateTime  @default(now())
+  checkIn     DateTime
+  checkOut    DateTime?
+  
+  shiftType   String    @default("MORNING")
+  
+  // فیلدهای محاسباتی جدید
+  workHours   Float     @default(0) // کل ساعات حضور
+  overtime    Float     @default(0) // ساعات اضافه‌کاری
+  deficit     Float     @default(0) // ساعات کسر کار (تأخیر/تعجیل)
+  
+  note        String?
+}
+
+model Leave {
+  id          Int       @id @default(autoincrement())
+  employeeId  Int
+  employee    Employee  @relation(fields: [employeeId], references: [id])
+  
+  startDate   DateTime
+  endDate     DateTime
+  type        String    // PAID, UNPAID, SICK
+  status      String    @default("PENDING") // PENDING, APPROVED, REJECTED
+  reason      String?
+  
+  createdAt   DateTime  @default(now())
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String
+  icon     String?
+  products Product[]
+}
+
+model Product {
+  id         Int         @id @default(autoincrement())
+  name       String
+  price      Int
+  image      String?
+  categoryId Int
+  category   Category    @relation(fields: [categoryId], references: [id])
+  orderItems OrderItem[]
+  recipes    Recipe[]
+  is_active  Boolean     @default(true)
+}
+
+model RawMaterial {
+  id       Int      @id @default(autoincrement())
+  name     String
+  unit     String
+  stock    Float    @default(0)
+  recipes  Recipe[]
+}
+
+model Recipe {
+  id           Int         @id @default(autoincrement())
+  productId    Int
+  product      Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  materialId   Int
+  rawMaterial  RawMaterial @relation(fields: [materialId], references: [id])
+  quantity     Float
+}
+
+model Order {
+  id            Int         @id @default(autoincrement())
+  employeeId    Int
+  employee      Employee    @relation(fields: [employeeId], references: [id])
+  customerName  String?
+  customerPhone String?
+  totalAmount   Int
+  paymentType   String      @default("CARD")      // فیلد قدیمی شما
+  paymentMethod String      @default("CARD")      // CARD یا CASH
+  status        String      @default("COMPLETED") // PENDING (میز پر) یا COMPLETED
+  orderType     String      @default("TAKEAWAY")  // DINE_IN (سالن) یا TAKEAWAY
+  tableNumber   Int         @default(0)           // شماره میز
+  createdAt     DateTime    @default(now())
+  settledAt     DateTime?
+  items         OrderItem[]
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderId   Int
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int     @default(1)
+  price     Int
+}
+
+model Setting {
+  id            Int     @id @default(autoincrement())
+  cafeName      String  @default("کافه")
+  cafeSubtitle  String  @default("آبیاران | Abyaran")
+  address       String  @default("تبریز، شعبه سنتو شرکت آبیاران")
+  phone         String  @default("۰۴۱-۱۲۳۴۵۶۷۸")
+  footerMessage String  @default("از خرید شما متشکریم")
+  socialMedia   String  @default("@AbyaranCafe")
+  logoPath      String? // برای آپلود لوگو در آینده
+  showLogo      Boolean @default(true) // این خط را اضافه کن
+}
